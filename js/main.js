@@ -29,6 +29,27 @@ function downloadChart() {
     link.click();
   }
 }
+function validateExpensesAlert() {
+  let invalid = false;
+  months.forEach(m => {
+    const mShort = m.toLowerCase().slice(0,3);
+    const incomeInput = document.getElementById('income-' + mShort);
+    const expensesInput = document.getElementById('expenses-' + mShort);
+    if (incomeInput && expensesInput) {
+      const income = parseFloat(incomeInput.value) || 0;
+      const expenses = parseFloat(expensesInput.value) || 0;
+      if (expenses > income) {
+        invalid = true;
+        expensesInput.classList.add('is-invalid');
+      } else {
+        expensesInput.classList.remove('is-invalid');
+      }
+    }
+  });
+  if (invalid) {
+    alert('Expenses should not exceed income for any month.');
+  }
+}
 document.addEventListener('DOMContentLoaded', function () {
   var ctx = document.getElementById('barChart');
   if (ctx) {
@@ -87,7 +108,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const mShort = m.toLowerCase().slice(0,3);
     const incomeInput = document.getElementById('income-' + mShort);
     const expensesInput = document.getElementById('expenses-' + mShort);
-    if (incomeInput) incomeInput.addEventListener('input', updateChart);
-    if (expensesInput) expensesInput.addEventListener('input', updateChart);
+    if (incomeInput) incomeInput.addEventListener('input', function() {
+      updateChart();
+      validateExpensesAlert();
+    });
+    if (expensesInput) expensesInput.addEventListener('input', function() {
+      updateChart();
+      validateExpensesAlert();
+    });
   });
 });
